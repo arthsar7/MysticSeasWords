@@ -99,7 +99,7 @@ fun GameScreen(
     onComplete: () -> Unit,
 ) {
     var droppedIndexes by remember { mutableStateOf(listOf<Int>()) }
-    val word: String = levels[level - 1]
+    val word: String = levels[if (level > levels.size) levels.size - 1 else level - 1]
     var timer by remember { mutableIntStateOf(30) }
     var letters by remember {
         mutableStateOf(
@@ -203,7 +203,7 @@ fun GameScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "LEVEL $level",
+                        text = "LEVEL ${if (level > levels.size) levels.size else level}",
                         style = TextStyle(
                             color = Color.Black,
                             fontSize = 24.sp,
