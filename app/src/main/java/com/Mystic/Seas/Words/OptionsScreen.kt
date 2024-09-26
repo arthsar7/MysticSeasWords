@@ -1,7 +1,6 @@
 package com.Mystic.Seas.Words
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,11 +19,8 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.Mystic.Seas.Words.ui.theme.appFont
 
 @Composable
 fun OptionsScreen(
@@ -60,61 +54,62 @@ fun OptionsScreen(
         )
 
         // Title with white text and red outline
-        Text(
-            text = "OPTIONS",
-            style = TextStyle(
-                fontSize = 32.sp,
-                color = Color.White,  // Changed to white
-                fontWeight = FontWeight.Bold,
-                fontFamily = appFont
-            ),
+        Column(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 50.dp)
-                .border(2.dp, Color.Red, RoundedCornerShape(8.dp))
-                .padding(8.dp)
-        )
-
-        // Dialog Background
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .paint(painterResource(id = R.drawable.option_dialog_bg), contentScale = ContentScale.Fit)
-                .padding(16.dp)
-                .size(320.dp, 200.dp)
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center, // Centering the buttons vertically
-                modifier = Modifier.fillMaxSize() // Ensure Column takes full height
+            OutlinedText(
+                text = "OPTIONS",
+                outlineColor = Color.Red,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(8.dp),
+                fontSize = 32.sp
+            )
+            Box(
+                modifier = Modifier
+                    .paint(painterResource(id = R.drawable.option_dialog_bg), contentScale = ContentScale.Fit)
+                    .padding(16.dp)
+                    .size(320.dp, 200.dp)
             ) {
-                // Sound Button
-                Image(
-                    painter = painterResource(id = if (isSoundActive) R.drawable.active_sound else R.drawable.inactive_sound),
-                    contentDescription = "Sound",
-                    modifier = Modifier
-                        .clickable {
-                            isSoundActive = !isSoundActive
-                            Prefs.soundVolume = if (isSoundActive) 0.6f else 0f
-                            SoundManager.setSoundVolume()
-                        }
-                        .padding(8.dp)
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center, // Centering the buttons vertically
+                    modifier = Modifier.fillMaxSize() // Ensure Column takes full height
+                ) {
+                    // Sound Button
+                    Image(
+                        painter = painterResource(id = if (isSoundActive) R.drawable.active_sound else R.drawable.inactive_sound),
+                        contentDescription = "Sound",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clickable {
+                                isSoundActive = !isSoundActive
+                                Prefs.soundVolume = if (isSoundActive) 0.6f else 0f
+                                SoundManager.setSoundVolume()
+                            }
+                            .padding(8.dp)
+                    )
 
-                // Music Button
-                Image(
-                    painter = painterResource(id = if (isMusicActive) R.drawable.active_music else R.drawable.unactive_music),
-                    contentDescription = "Music",
-                    modifier = Modifier
-                        .clickable {
-                            isMusicActive = !isMusicActive
-                            Prefs.musicVolume = if (isMusicActive) 0.6f else 0f
-                            SoundManager.setMusicVolume()
-                        }
-                        .padding(8.dp)
-                )
+                    // Music Button
+                    Image(
+                        painter = painterResource(id = if (isMusicActive) R.drawable.active_music else R.drawable.unactive_music),
+                        contentDescription = "Music",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clickable {
+                                isMusicActive = !isMusicActive
+                                Prefs.musicVolume = if (isMusicActive) 0.6f else 0f
+                                SoundManager.setMusicVolume()
+                            }
+                            .padding(8.dp)
+                    )
+                }
             }
         }
+
+        // Dialog Background
     }
 }
 

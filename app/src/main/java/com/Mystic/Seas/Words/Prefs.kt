@@ -7,6 +7,14 @@ object Prefs {
         sharedPrefs = context.getSharedPreferences("mysterygame", android.content.Context.MODE_PRIVATE)
     }
 
+    val level: Int
+        get() = sharedPrefs.getInt("level", 1)
+
+
+    fun passLevel() {
+        if (level < levels.size) sharedPrefs.edit().putInt("level", level + 1).apply()
+    }
+
     var musicVolume: Float
         get() = sharedPrefs.getFloat("musicVolume", 0.5f)
         set(value) = sharedPrefs.edit().putFloat("musicVolume", value).apply()

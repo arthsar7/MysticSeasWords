@@ -2,37 +2,42 @@ package com.Mystic.Seas.Words
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import com.Mystic.Seas.Words.ui.theme.appFont
 
-@Preview
 @Composable
-fun GameWinScreen() {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+fun GameWinScreen(
+    result : Boolean = true,
+    onRetry: () -> Unit,
+    onNext: () -> Unit,
+    onExit: () -> Unit
+) {
 
     Box(
         modifier = Modifier
@@ -50,7 +55,7 @@ fun GameWinScreen() {
 
             // Увеличиваем размер текста "WINNER"
             OutlinedText(
-                text = "WINNER",
+                text = if (result) "WINNER" else "DEFEAT",
                 fontSize = 64.sp, // Увеличен размер текста
                 color = Color.Yellow,
                 outlineColor = Color.Red
@@ -79,7 +84,7 @@ fun GameWinScreen() {
                 ) {
                     // "GREAT!" текст
                     OutlinedText(
-                        text = "GREAT!",
+                        text = if (result) "GREAT!" else "TIME IS OVER",
                         fontSize = 32.sp, // Увеличен размер текста
                         color = Color.Yellow,
                         outlineColor = Color.Red
@@ -99,7 +104,7 @@ fun GameWinScreen() {
 
                     // Уровень
                     OutlinedText(
-                        text = "1", // Уровень
+                        text = if (result) (Prefs.level - 1).toString() else Prefs.level.toString(), // Уровень
                         fontSize = 64.sp, // Увеличен размер текста
                         color = Color.Yellow,
                         outlineColor = Color.Red
@@ -118,7 +123,9 @@ fun GameWinScreen() {
                             contentDescription = "Menu",
                             modifier = Modifier
                                 .size(48.dp)
-                                .clickable { /* Действие при нажатии меню */ }
+                                .clickable {
+                                    onExit()
+                                }
                         )
                         Spacer(modifier = Modifier.width(16.dp))
 
@@ -128,7 +135,9 @@ fun GameWinScreen() {
                             contentDescription = "Retry",
                             modifier = Modifier
                                 .size(48.dp)
-                                .clickable { /* Действие при нажатии повторить */ }
+                                .clickable {
+                                    onRetry()
+                                }
                         )
                     }
                 }
@@ -139,10 +148,16 @@ fun GameWinScreen() {
 
             // Кнопка Next
             Image(
-                painter = painterResource(id = R.drawable.nextbutton),
+                painter = painterResource(id = if (result && Prefs.level < 20) R.drawable.nextbutton else R.drawable.try_again),
                 contentDescription = "Next",
                 modifier = Modifier
-                    .clickable { /* Действие при нажатии Next */ }
+                    .clickable {
+                        if (result && Prefs.level < 20) {
+                            onNext()
+                        } else {
+                            onRetry()
+                        }
+                    }
                     .fillMaxWidth(0.8f)
                     .height(64.dp)
             )
@@ -156,7 +171,8 @@ fun OutlinedText(
     text: String,
     fontSize: TextUnit,
     color: Color,
-    outlineColor: Color
+    outlineColor: Color,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
@@ -167,9 +183,10 @@ fun OutlinedText(
             fontWeight = FontWeight.Bold,
             shadow = Shadow(
                 color = outlineColor,
-                blurRadius = 8f
+                blurRadius = 3f
             )
         ),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        modifier = modifier
     )
 }

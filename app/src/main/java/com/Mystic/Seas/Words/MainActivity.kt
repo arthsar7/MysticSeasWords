@@ -3,17 +3,11 @@ package com.Mystic.Seas.Words
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.Mystic.Seas.Words.ui.theme.MysticSeasWordsTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +34,7 @@ class MainActivity : ComponentActivity() {
                         MenuScreen(
                             onNext = {
                                 SoundManager.playSound()
-                                navController.navigate("game") {
+                                navController.navigate("game/${Prefs.level}") {
                                     launchSingleTop = true
                                 }
                             },
@@ -63,17 +57,59 @@ class MainActivity : ComponentActivity() {
                             navController.navigateUp()
                         })
                     }
-                    composable("game") {
-                        GameScreen {
+                    composable("game/{level}",
+                        arguments = listOf(
+                            navArgument("level") { type = NavType.IntType }
+                        )
+                        ) {
+                        val level = it.arguments?.getInt("level") ?: 1
+                        GameScreen(
+                            level = level,
+                            onResult = {
+                                navController.navigate("result/$it") {
+                                    launchSingleTop = true
+                                    popUpTo("game") { inclusive = true }
+                                }
+                            }
+                        ) {
                             SoundManager.playSound()
                             navController.navigateUp()
                         }
                     }
+
                     composable("exit") {
                         ExitConfirmationScreen(onReturn = {
                             SoundManager.playSound()
                             navController.navigateUp()
                         })
+                    }
+
+                    composable("result/{result}",
+                        arguments = listOf(
+                            navArgument("result") { type = NavType.BoolType }
+                        )
+                    ) {
+                        val result = it.arguments?.getBoolean("result") ?: false
+                        GameWinScreen(result = result,
+                            onRetry = {
+                                SoundManager.playSound()
+                                navController.navigate("game/${if (!result) Prefs.level else Prefs.level - 1}") {
+                                    launchSingleTop = true
+                                    popUpTo("result/$result") { inclusive = true }
+                                }
+                            },
+                            onExit = {
+                                SoundManager.playSound()
+                                navController.navigateUp()
+                            },
+                            onNext = {
+                                SoundManager.playSound()
+                                navController.navigate("game/${Prefs.level}") {
+                                    launchSingleTop = true
+                                    popUpTo("result/$result") { inclusive = true }
+                                }
+                            }
+                        )
                     }
                 }
             }
