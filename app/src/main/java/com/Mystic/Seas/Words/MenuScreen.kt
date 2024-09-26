@@ -21,7 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MenuScreen(onNext: () -> Unit, onExit: () -> Unit, onOptions: () -> Unit) {
+fun MenuScreen(
+    onNext: () -> Unit,
+    onExit: () -> Unit,
+    onOptions: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
